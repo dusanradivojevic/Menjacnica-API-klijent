@@ -6,6 +6,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import main.BazaValuta;
+import main.Valuta;
+
 import java.awt.Toolkit;
 import java.awt.Window.Type;
 import java.awt.Color;
@@ -14,6 +18,9 @@ import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
 
 public class MenjacnicaGUI extends JFrame {
 	private JTextField textField1;
@@ -39,11 +46,18 @@ public class MenjacnicaGUI extends JFrame {
 	 * Create the frame.
 	 */
 	public MenjacnicaGUI() {
-		setBackground(Color.GRAY);
 		setResizable(false);
+		setSize(new Dimension(450, 300));
+		setPreferredSize(new Dimension(500, 500));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBackground(Color.GRAY);
 		setTitle("Menjacnica");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MenjacnicaGUI.class.getResource("/icons/49668274-dollar-sign-vector-icon.jpg")));
 		getContentPane().setLayout(null);
+		///////////////////////////////////////////
+		BazaValuta b = new BazaValuta();
+		ArrayList<Valuta> lista = b.vratiValute();
+		///////////////////////////////////////////
 		
 		JLabel lblNewLabel = new JLabel("Iz valute zemlje:");
 		lblNewLabel.setMinimumSize(new Dimension(60, 14));
@@ -60,12 +74,17 @@ public class MenjacnicaGUI extends JFrame {
 		getContentPane().add(lblUValutuDruge);
 		
 		JComboBox comboBox1 = new JComboBox();
-		comboBox1.setBounds(125, 69, 28, 20);
+		comboBox1.setBounds(67, 69, 86, 20);
 		getContentPane().add(comboBox1);
 		
 		JComboBox comboBox2 = new JComboBox();
-		comboBox2.setBounds(319, 69, 28, 20);
+		comboBox2.setBounds(261, 69, 86, 20);
 		getContentPane().add(comboBox2);
+		
+		for (int i = 0; i < lista.size(); i++) {
+			comboBox1.addItem(lista.get(i).getName());
+			comboBox2.addItem(lista.get(i).getName());
+		}
 		
 		JLabel lblIznos = new JLabel("Iznos:");
 		lblIznos.setBounds(67, 129, 46, 14);
