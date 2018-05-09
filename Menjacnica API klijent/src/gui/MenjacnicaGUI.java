@@ -123,6 +123,8 @@ public class MenjacnicaGUI extends JFrame {
 					} catch (Exception e) {
 						JOptionPane.showMessageDialog(null, "Ne postoje podaci o konverziji izmedju datih valuta.",
 								"Greska", JOptionPane.ERROR_MESSAGE);
+					} finally {
+						b.sacuvajLog(valIz, valU, kurs);
 					}				
 			}
 		});
