@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 import java.awt.Window.Type;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -23,8 +24,8 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 
 public class MenjacnicaGUI extends JFrame {
-	private JTextField textField1;
-	private JTextField textField2;
+	private JTextField textFieldIz;
+	private JTextField textFieldU;
 
 	/**
 	 * Launch the application.
@@ -73,17 +74,17 @@ public class MenjacnicaGUI extends JFrame {
 		lblUValutuDruge.setBounds(261, 44, 86, 14);
 		getContentPane().add(lblUValutuDruge);
 		
-		JComboBox comboBox1 = new JComboBox();
-		comboBox1.setBounds(67, 69, 86, 20);
-		getContentPane().add(comboBox1);
+		JComboBox comboBoxIz = new JComboBox();
+		comboBoxIz.setBounds(67, 69, 86, 20);
+		getContentPane().add(comboBoxIz);
 		
-		JComboBox comboBox2 = new JComboBox();
-		comboBox2.setBounds(261, 69, 86, 20);
-		getContentPane().add(comboBox2);
+		JComboBox comboBoxU = new JComboBox();
+		comboBoxU.setBounds(261, 69, 86, 20);
+		getContentPane().add(comboBoxU);
 		
 		for (int i = 0; i < lista.size(); i++) {
-			comboBox1.addItem(lista.get(i).getName());
-			comboBox2.addItem(lista.get(i).getName());
+			comboBoxIz.addItem(lista.get(i).getName());
+			comboBoxU.addItem(lista.get(i).getName());
 		}
 		
 		JLabel lblIznos = new JLabel("Iznos:");
@@ -94,18 +95,37 @@ public class MenjacnicaGUI extends JFrame {
 		lblIznos_1.setBounds(261, 129, 46, 14);
 		getContentPane().add(lblIznos_1);
 		
-		textField1 = new JTextField();
-		textField1.setBounds(67, 153, 86, 20);
-		getContentPane().add(textField1);
-		textField1.setColumns(10);
+		textFieldIz = new JTextField();
+		textFieldIz.setBounds(67, 153, 86, 20);
+		getContentPane().add(textFieldIz);
+		textFieldIz.setColumns(10);
 		
-		textField2 = new JTextField();
-		textField2.setEditable(false);
-		textField2.setBounds(261, 153, 86, 20);
-		getContentPane().add(textField2);
-		textField2.setColumns(10);
+		textFieldU = new JTextField();
+		textFieldU.setEditable(false);
+		textFieldU.setBounds(261, 153, 86, 20);
+		getContentPane().add(textFieldU);
+		textFieldU.setColumns(10);
 		
 		JButton btnKonvertuj = new JButton("KONVERTUJ");
+		btnKonvertuj.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+					int from = comboBoxIz.getSelectedIndex();
+					int to = comboBoxU.getSelectedIndex();
+					String valIz = lista.get(from).getCurrencyId();
+					String valU = lista.get(to).getCurrencyId();
+					Double iznosIz = Double.parseDouble(textFieldIz.getText());
+					Double kurs = 0.0;
+					try {
+						kurs = b.vratiKurs(valIz, valU);
+						Double iznosTo = iznosIz * kurs;
+						textFieldU.setText("" + iznosTo);
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(null, "Ne postoje podaci o konverziji izmedju datih valuta.",
+								"Greska", JOptionPane.ERROR_MESSAGE);
+					}				
+			}
+		});
 		btnKonvertuj.setBounds(137, 215, 151, 23);
 		getContentPane().add(btnKonvertuj);
 	}
