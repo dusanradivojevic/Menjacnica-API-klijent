@@ -21,7 +21,7 @@ import com.google.gson.JsonParser;
 
 public class BazaValuta {
 
-	public String ucitajSaSajta(String url) throws IOException {
+	public static String ucitajSaSajta(String url) throws IOException {
 
 		URL obj = new URL(url);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -47,7 +47,7 @@ public class BazaValuta {
 		return response;
 	}
 
-	public ArrayList<Valuta> vratiValute() {
+	public static ArrayList<Valuta> vratiValute() {
 
 		String service = "/countries";
 		String api = "http://free.currencyconverterapi.com/api/v3";
@@ -78,7 +78,7 @@ public class BazaValuta {
 		return lista;
 	}
 
-	public double vratiKurs(String iz, String u) throws Exception {
+	public static double vratiKurs(String iz, String u) throws Exception {
 
 		String service = "/convert";
 		String api = "http://free.currencyconverterapi.com/api/v3";
@@ -103,7 +103,7 @@ public class BazaValuta {
 		return 0;
 	}
 
-	public void sacuvajLog(String iz, String u, double kurs) {
+	public static void sacuvajLog(String iz, String u, double kurs) {
 
 		Konverzija konverzija = new Konverzija();
 		konverzija.setIzValute(iz);

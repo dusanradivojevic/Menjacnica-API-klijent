@@ -56,8 +56,7 @@ public class MenjacnicaGUI extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MenjacnicaGUI.class.getResource("/icons/49668274-dollar-sign-vector-icon.jpg")));
 		getContentPane().setLayout(null);
 		///////////////////////////////////////////
-		BazaValuta b = new BazaValuta();
-		ArrayList<Valuta> lista = b.vratiValute();
+		ArrayList<Valuta> lista = BazaValuta.vratiValute();
 		///////////////////////////////////////////
 		
 		JLabel lblNewLabel = new JLabel("Iz valute zemlje:");
@@ -86,7 +85,7 @@ public class MenjacnicaGUI extends JFrame {
 			comboBoxIz.addItem(lista.get(i).getName());
 			comboBoxU.addItem(lista.get(i).getName());
 		}
-		
+	
 		JLabel lblIznos = new JLabel("Iznos:");
 		lblIznos.setBounds(67, 129, 46, 14);
 		getContentPane().add(lblIznos);
@@ -117,14 +116,14 @@ public class MenjacnicaGUI extends JFrame {
 					Double iznosIz = Double.parseDouble(textFieldIz.getText());
 					Double kurs = 0.0;
 					try {
-						kurs = b.vratiKurs(valIz, valU);
+						kurs = BazaValuta.vratiKurs(valIz, valU);
 						Double iznosTo = iznosIz * kurs;
 						textFieldU.setText("" + iznosTo);
 					} catch (Exception e) {
 						JOptionPane.showMessageDialog(null, "Ne postoje podaci o konverziji izmedju datih valuta.",
 								"Greska", JOptionPane.ERROR_MESSAGE);
 					} finally {
-						b.sacuvajLog(valIz, valU, kurs);
+						BazaValuta.sacuvajLog(valIz, valU, kurs);
 					}				
 			}
 		});
