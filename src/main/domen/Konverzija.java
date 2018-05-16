@@ -1,4 +1,4 @@
-package main;
+package main.domen;
 
 public class Konverzija {
 	

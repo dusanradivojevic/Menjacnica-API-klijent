@@ -1,149 +1,34 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map.Entry;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import interfejs.MenjacnicaInterfejs;
+import main.domen.Valuta;
+import main.sistemskeOperacije.SOSacuvajLog;
+import main.sistemskeOperacije.SOUcitajSaSajta;
+import main.sistemskeOperacije.SOVratiKurs;
+import main.sistemskeOperacije.SOVratiValute;
 
-public class Menjacnica {
+public class Menjacnica implements MenjacnicaInterfejs {
 
-	public static String ucitajSaSajta(String url) throws IOException {
+	public String ucitajSaSajta(String url) throws IOException {
 
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		con.setRequestMethod("GET");
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-		boolean endReading = false;
-		String response = "";
-
-		while (!endReading) {
-			String s = in.readLine();
-
-			if (s != null) {
-				response += s;
-			} else {
-				endReading = true;
-			}
-		}
-		in.close();
-
-		return response;
+		return SOUcitajSaSajta.izvrsi(url);
 	}
 
-	public static ArrayList<Valuta> vratiValute() {
+	public ArrayList<Valuta> vratiValute() {
 
-		final String service = "/countries";
-		final String api = "http://free.currencyconverterapi.com/api/v3";
-		String response;
-		ArrayList<Valuta> lista = null;
-
-		try {
-			response = ucitajSaSajta(api + service);
-
-			Gson gson = new GsonBuilder().create();
-
-			JsonObject contentJson = gson.fromJson(response, JsonObject.class);
-
-			JsonObject countriesJson = contentJson.get("results").getAsJsonObject();
-
-			lista = new ArrayList<Valuta>();
-
-			for (Entry<String, JsonElement> entry : countriesJson.entrySet()) {
-				Valuta item = gson.fromJson(entry.getValue().getAsJsonObject(), Valuta.class);
-				lista.add(item);
-			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return lista;
+		return SOVratiValute.izvrsi();
 	}
 
-	public static double vratiKurs(String iz, String u) throws Exception {
+	public double vratiKurs(String iz, String u) throws Exception {
 
-		final String service = "/convert";
-		final String api = "http://free.currencyconverterapi.com/api/v3";
-		String url = api + service + '?' + "q=" + iz + '_' + u;
-
-		try {
-			String content = ucitajSaSajta(url);
-			JsonParser parser = new JsonParser();
-			JsonObject con = parser.parse(content).getAsJsonObject();
-
-			JsonObject query = con.get("query").getAsJsonObject();
-			if (query.get("count").getAsInt() != 0) {
-				JsonObject results = con.get("results").getAsJsonObject();
-				JsonObject kurs = results.get(iz + '_' + u).getAsJsonObject();
-				double k = kurs.get("val").getAsDouble();
-				return k;
-			} else
-				throw new Exception("Ne postoje podaci o konverziji izmedju dve valute");
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-		return 0;
+		return SOVratiKurs.izvrsi(iz, u);
 	}
 
-	public static void sacuvajLog(String iz, String u, double kurs) {
+	public void sacuvajLog(String iz, String u, double kurs) {
 
-		Konverzija konverzija = new Konverzija();
-		konverzija.setIzValute(iz);
-		konverzija.setuValutu(u);
-		konverzija.setKurs(kurs);
-
-		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
-		String date = sdf.format(now);
-
-		konverzija.setDatumVreme(date);
-		Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
-
-		JsonArray history = null;
-
-		String obj = gson.toJson(konverzija);
-
-		JsonObject jsonKon = gson.fromJson(obj, JsonObject.class);
-
-		try (FileReader reader = new FileReader("data/log.json")) {
-			history = gson.fromJson(reader, JsonArray.class);
-		} catch (FileNotFoundException e) {
-			File f = new File("data");
-			f.mkdir();
-		}catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-		
-		try (FileWriter writer = new FileWriter("data/log.json")) {
-			if (history == null)
-				history = new JsonArray();
-
-			history.add(jsonKon);
-			writer.write(gson.toJson(history));
-
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
-
+		SOSacuvajLog.izvrsi(iz, u, kurs);
 	}
 }

@@ -1,4 +1,4 @@
-package gui;
+package gui.prozor;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -7,8 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import interfejs.MenjacnicaInterfejs;
 import main.Menjacnica;
-import main.Valuta;
+import main.domen.Valuta;
 
 import java.awt.Toolkit;
 import java.awt.Window.Type;
@@ -26,6 +27,7 @@ import java.awt.event.ActionEvent;
 public class MenjacnicaGUI extends JFrame {
 	private JTextField textFieldIz;
 	private JTextField textFieldU;
+	private static MenjacnicaInterfejs menjacnica;
 
 	/**
 	 * Launch the application.
@@ -34,6 +36,7 @@ public class MenjacnicaGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					menjacnica = new Menjacnica();
 					MenjacnicaGUI frame = new MenjacnicaGUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -57,7 +60,7 @@ public class MenjacnicaGUI extends JFrame {
 				.getImage(MenjacnicaGUI.class.getResource("/icons/49668274-dollar-sign-vector-icon.jpg")));
 		getContentPane().setLayout(null);
 		///////////////////////////////////////////
-		ArrayList<Valuta> lista = Menjacnica.vratiValute();
+		ArrayList<Valuta> lista = menjacnica.vratiValute();
 		///////////////////////////////////////////
 
 		JLabel lblNewLabel = new JLabel("Iz valute zemlje:");
@@ -124,14 +127,14 @@ public class MenjacnicaGUI extends JFrame {
 				Double iznosIz = Double.parseDouble(tekstIz);
 				Double kurs = 0.0;
 				try {
-					kurs = Menjacnica.vratiKurs(valIz, valU);
+					kurs = menjacnica.vratiKurs(valIz, valU);
 					Double iznosTo = iznosIz * kurs;
 					textFieldU.setText("" + iznosTo);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(null, "Ne postoje podaci o konverziji izmedju datih valuta.",
 							"Greska", JOptionPane.ERROR_MESSAGE);
 				} finally {
-					Menjacnica.sacuvajLog(valIz, valU, kurs);
+					menjacnica.sacuvajLog(valIz, valU, kurs);
 				}
 			}
 		});
