@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import interfejs.MenjacnicaInterfejs;
 import main.domen.Valuta;
+import main.sistemskeOperacije.SOKonvertuj;
 import main.sistemskeOperacije.SOSacuvajLog;
 import main.sistemskeOperacije.SOUcitajSaSajta;
 import main.sistemskeOperacije.SOVratiKurs;
@@ -30,5 +31,10 @@ public class Menjacnica implements MenjacnicaInterfejs {
 	public void sacuvajLog(String iz, String u, double kurs) {
 
 		SOSacuvajLog.izvrsi(iz, u, kurs);
+	}
+	
+	public double konvertuj(double iznosIz, String valIz, String valU) throws Exception {
+		
+		return SOKonvertuj.izvrsi(iznosIz, valIz, valU);
 	}
 }

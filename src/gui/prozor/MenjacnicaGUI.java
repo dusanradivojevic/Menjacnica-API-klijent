@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import gui.kontroler.GUIKontroler;
 import interfejs.MenjacnicaInterfejs;
 import main.Menjacnica;
 import main.domen.Valuta;
@@ -28,23 +29,8 @@ public class MenjacnicaGUI extends JFrame {
 	private JTextField textFieldIz;
 	private JTextField textFieldU;
 	private static MenjacnicaInterfejs menjacnica;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					menjacnica = new Menjacnica();
-					MenjacnicaGUI frame = new MenjacnicaGUI();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private static ArrayList<Valuta> lista = GUIKontroler.menjacnica.vratiValute();
+	
 
 	/**
 	 * Create the frame.
@@ -59,9 +45,6 @@ public class MenjacnicaGUI extends JFrame {
 		setIconImage(Toolkit.getDefaultToolkit()
 				.getImage(MenjacnicaGUI.class.getResource("/icons/49668274-dollar-sign-vector-icon.jpg")));
 		getContentPane().setLayout(null);
-		///////////////////////////////////////////
-		ArrayList<Valuta> lista = menjacnica.vratiValute();
-		///////////////////////////////////////////
 
 		JLabel lblNewLabel = new JLabel("Iz valute zemlje:");
 		lblNewLabel.setMinimumSize(new Dimension(60, 14));
@@ -84,11 +67,8 @@ public class MenjacnicaGUI extends JFrame {
 		JComboBox comboBoxU = new JComboBox();
 		comboBoxU.setBounds(261, 69, 86, 20);
 		getContentPane().add(comboBoxU);
-
-		for (int i = 0; i < lista.size(); i++) {
-			comboBoxIz.addItem(lista.get(i).getName());
-			comboBoxU.addItem(lista.get(i).getName());
-		}
+		
+		napuniComboBox(comboBoxIz, comboBoxU);
 
 		JLabel lblIznos = new JLabel("Iznos:");
 		lblIznos.setBounds(67, 129, 46, 14);
@@ -113,42 +93,22 @@ public class MenjacnicaGUI extends JFrame {
 		btnKonvertuj.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				String tekstIz = textFieldIz.getText();
-				if (tekstIz == null || tekstIz.equals("") || isNumeric(tekstIz)) {
-					JOptionPane.showMessageDialog(null, "Morate ispravno uneti iznos za konvertovanje.", 
-							"Greska", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-
-				int from = comboBoxIz.getSelectedIndex();
-				int to = comboBoxU.getSelectedIndex();
-				String valIz = lista.get(from).getCurrencyId();
-				String valU = lista.get(to).getCurrencyId();
-				Double iznosIz = Double.parseDouble(tekstIz);
-				Double kurs = 0.0;
-				try {
-					kurs = menjacnica.vratiKurs(valIz, valU);
-					Double iznosTo = iznosIz * kurs;
-					textFieldU.setText("" + iznosTo);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(null, "Ne postoje podaci o konverziji izmedju datih valuta.",
-							"Greska", JOptionPane.ERROR_MESSAGE);
-				} finally {
-					menjacnica.sacuvajLog(valIz, valU, kurs);
-				}
+				String konvertovanIznos = GUIKontroler.konvertuj(lista, comboBoxIz.getSelectedIndex(), 
+						comboBoxU.getSelectedIndex(), textFieldIz.getText());
+				
+				textFieldU.setText(konvertovanIznos);
 			}
 		});
 		btnKonvertuj.setBounds(137, 215, 151, 23);
 		getContentPane().add(btnKonvertuj);
 	}
 
-	private boolean isNumeric(String str) {
-		try {
-			double d = Double.parseDouble(str);
-			
-		} catch (NumberFormatException nfe) {
-			return false;
+	//ArrayList<Valuta> lista = menjacnica.vratiValute()
+	private void napuniComboBox(JComboBox iz, JComboBox u) {
+		
+		for (int i = 0; i < lista.size(); i++) {
+			iz.addItem(lista.get(i).getName());
+			u.addItem(lista.get(i).getName());
 		}
-		return true;
 	}
 }

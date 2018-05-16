@@ -14,4 +14,6 @@ public interface MenjacnicaInterfejs {
 	public double vratiKurs(String iz, String u) throws Exception;
 	
 	public void sacuvajLog(String iz, String u, double kurs);
+	
+	public double konvertuj(double iznosIz, String valIz, String valU) throws Exception;
 }
