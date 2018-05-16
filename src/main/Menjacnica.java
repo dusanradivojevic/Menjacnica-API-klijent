@@ -1,6 +1,8 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class BazaValuta {
+public class Menjacnica {
 
 	public static String ucitajSaSajta(String url) throws IOException {
 
@@ -49,8 +51,8 @@ public class BazaValuta {
 
 	public static ArrayList<Valuta> vratiValute() {
 
-		String service = "/countries";
-		String api = "http://free.currencyconverterapi.com/api/v3";
+		final String service = "/countries";
+		final String api = "http://free.currencyconverterapi.com/api/v3";
 		String response;
 		ArrayList<Valuta> lista = null;
 
@@ -80,8 +82,8 @@ public class BazaValuta {
 
 	public static double vratiKurs(String iz, String u) throws Exception {
 
-		String service = "/convert";
-		String api = "http://free.currencyconverterapi.com/api/v3";
+		final String service = "/convert";
+		final String api = "http://free.currencyconverterapi.com/api/v3";
 		String url = api + service + '?' + "q=" + iz + '_' + u;
 
 		try {
@@ -111,7 +113,7 @@ public class BazaValuta {
 		konverzija.setKurs(kurs);
 
 		Date now = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
 		String date = sdf.format(now);
 
 		konverzija.setDatumVreme(date);
@@ -125,9 +127,13 @@ public class BazaValuta {
 
 		try (FileReader reader = new FileReader("data/log.json")) {
 			history = gson.fromJson(reader, JsonArray.class);
-		} catch (IOException e) {
+		} catch (FileNotFoundException e) {
+			File f = new File("data");
+			f.mkdir();
+		}catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
+		
 		try (FileWriter writer = new FileWriter("data/log.json")) {
 			if (history == null)
 				history = new JsonArray();
